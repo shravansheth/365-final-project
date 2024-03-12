@@ -22,12 +22,70 @@ db.connect(err => {
     console.log('Connected to the database');
 });
 
-// Example route
+
+
+// All flights
 app.get('/data', (req, res) => {
-    db.query('SELECT * FROM Flight', (err, result) => {
+    db.query(`
+    SELECT 
+    Flight.flight_id AS FlightID,
+    Airline.airline_name AS AirlineName,
+    DepartureAirport.airport_city AS DepartureCity,
+    DestinationAirport.airport_city AS DestinationCity,
+    Flight.scheduled_departure_time AS ScheduledDepartureTime,
+    Flight.scheduled_arrival_time AS ScheduledArrivalTime,
+    Flight.flight_status AS FlightStatus
+FROM 
+    Flight
+JOIN 
+    Airline ON Flight.airline_id = Airline.airline_id
+JOIN 
+    Airport AS DepartureAirport ON Flight.departure_airport_id = DepartureAirport.airport_id
+JOIN 
+    Airport AS DestinationAirport ON Flight.destination_airport_id = DestinationAirport.airport_id;`, 
+    (err, result) => {
         if (err) throw err;
         res.send(result);
     });
+});
+
+// Search Flights
+app.get('/search-flights', async (req, res) => {
+    const { departureCity, destinationCity, date } = req.query;
+
+    // Format date to match SQL's DATE format (YYYY-MM-DD)
+    const formattedDate = new Date(date).toISOString().split('T')[0];
+
+    // Assuming you're using a library like mysql2 or similar for SQL operations
+    const query = `
+    SELECT 
+    Flight.flight_id AS FlightID,
+    Airline.airline_name AS AirlineName,
+    DepartureAirport.airport_city AS DepartureCity,
+    DestinationAirport.airport_city AS DestinationCity,
+    Flight.scheduled_departure_time AS ScheduledDepartureTime,
+    Flight.scheduled_arrival_time AS ScheduledArrivalTime,
+    Flight.flight_status AS FlightStatus
+FROM 
+    Flight
+JOIN 
+    Airline ON Flight.airline_id = Airline.airline_id
+JOIN 
+    Airport AS DepartureAirport ON Flight.departure_airport_id = DepartureAirport.airport_id
+JOIN 
+    Airport AS DestinationAirport ON Flight.destination_airport_id = DestinationAirport.airport_id;
+WHERE DepartureAirport.airport_city = ?
+    AND DestinationAirport.airport_city = ?
+    AND DATE(Flight.scheduled_departure_time) = ?
+    `;
+
+    try {
+        const results = await db.query(query, [departureCity, destinationCity, formattedDate]);
+        res.json(results);
+    } catch (error) {
+        console.error('Error fetching flights:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 app.listen(port, () => {
