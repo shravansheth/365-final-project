@@ -11,9 +11,9 @@ app.use(cors());
 // Create a connection to your SQL database
 const db = mysql.createConnection({
     host: 'localhost',
-    user: 'yourDatabaseUsername',
-    password: 'yourDatabasePassword',
-    database: 'yourDatabaseName'
+    user: 'root',
+    password: 'shravann',
+    database: 'FlightDatabase'
 });
 
 // Connect to the database
@@ -24,7 +24,7 @@ db.connect(err => {
 
 // Example route
 app.get('/data', (req, res) => {
-    db.query('SELECT * FROM yourTableName', (err, result) => {
+    db.query('SELECT * FROM Flight', (err, result) => {
         if (err) throw err;
         res.send(result);
     });

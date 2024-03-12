@@ -10,20 +10,17 @@ fetch('http://localhost:3001/data')
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header className="bg-blue-500 text-white p-6">
+        <div className="container mx-auto">
+          <h1 className="text-3xl font-bold">FlightBuddy</h1>
+        </div>
       </header>
+      <main>
+        {/* Content and components will go here */}
+        <p className="mt-4 text-center">
+          Welcome to FlightBuddy. Your journey starts here.
+        </p>
+      </main>
     </div>
   );
 }
