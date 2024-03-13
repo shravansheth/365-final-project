@@ -5,17 +5,22 @@ import "react-datepicker/dist/react-datepicker.css";
 interface SearchFlightModalProps {
     isOpen: boolean;
     setShowModal: (isOpen: boolean) => void;
+    onSearchResults: (results: any) => void;
 }
 
 const SearchFlightModal: React.FC<SearchFlightModalProps> = ({
     isOpen,
     setShowModal,
+    onSearchResults
 }) => {
     const [flightSearch, setFlightSearch] = useState({
         departureCity: "",
         destinationCity: "",
         date: new Date(),
     });
+
+    const [searchResult, setSearchResult] = useState([]);
+    
 
     if (!isOpen) return null;
 
@@ -34,11 +39,51 @@ const SearchFlightModal: React.FC<SearchFlightModalProps> = ({
         }));
     }
 
-    async function submitForm(event) {
-        event.preventDefault();
-        console.log(flightSearch);
-        setShowModal(false);
-    }
+    // async function submitForm(event) {
+    //     event.preventDefault();
+    //     console.log(flightSearch);
+    //     setShowModal(false);
+    // }
+
+    function submitForm(event) {
+    event.preventDefault();
+
+    const date = new Date(flightSearch.date.setHours(0, 0, 0, 0));
+    const adjustedDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    
+    const queryParams = new URLSearchParams({
+        departureCity: flightSearch.departureCity,
+        destinationCity: flightSearch.destinationCity,
+        date: adjustedDate.toISOString().split('T')[0],
+    });
+
+    fetch(`http://localhost:3001/search-flights?${queryParams}`)
+        .then(response => {
+            console.log(response); // Log the raw response
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data); // Log the data
+            if (data.length > 0) {
+                setSearchResult(JSON.stringify(data, null, 2));
+                onSearchResults(data); // Call the callback with the search results
+              } else {
+                throw new Error("No such flights found.");
+              }
+            })
+        .catch(error => {
+            console.error('Error:', error);
+            setSearchResult("Failed to search for flights. Please try again.");
+        })
+        .finally(() => {
+            setShowModal(false);
+        });
+}
+
+
 
     return (
         <>
@@ -119,6 +164,14 @@ const SearchFlightModal: React.FC<SearchFlightModalProps> = ({
                     </div>
                 </div>
             </div>
+            {searchResult && (
+            <div
+                style={{ position: 'fixed', bottom: '10px', left: '10px', backgroundColor: 'white', padding: '10px', border: '1px solid black' }}
+            >
+                <p>Search Results:</p>
+                <pre>{JSON.stringify(searchResult, null, 2)}</pre>
+            </div>
+        )}
         </>
     );
 };

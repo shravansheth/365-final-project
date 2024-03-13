@@ -45,6 +45,7 @@ JOIN
     Airport AS DestinationAirport ON Flight.destination_airport_id = DestinationAirport.airport_id;`, 
     (err, result) => {
         if (err) throw err;
+        console.log(result)
         res.send(result);
     });
 });
@@ -73,19 +74,27 @@ JOIN
 JOIN 
     Airport AS DepartureAirport ON Flight.departure_airport_id = DepartureAirport.airport_id
 JOIN 
-    Airport AS DestinationAirport ON Flight.destination_airport_id = DestinationAirport.airport_id;
+    Airport AS DestinationAirport ON Flight.destination_airport_id = DestinationAirport.airport_id
 WHERE DepartureAirport.airport_city = ?
     AND DestinationAirport.airport_city = ?
-    AND DATE(Flight.scheduled_departure_time) = ?
+    AND DATE(Flight.scheduled_departure_time) = ?;
     `;
+    console.log(formattedDate);
+    db.query(query, [departureCity, destinationCity, formattedDate],
+        (err, result) => {
+        console.log(result)
+        if (err) throw err;
+        res.send(result);
+    });
 
-    try {
-        const results = await db.query(query, [departureCity, destinationCity, formattedDate]);
-        res.json(results);
-    } catch (error) {
-        console.error('Error fetching flights:', error);
-        res.status(500).send('Internal Server Error');
-    }
+    // try {
+    //     const result = await db.query(query, [departureCity, destinationCity, formattedDate]);
+    //     console.log(result)
+    //     res.send(result);
+    // } catch (error) {
+    //     console.error('Error fetching flights:', error);
+    //     res.status(500).send('Internal Server Error');
+    // }
 });
 
 app.listen(port, () => {
