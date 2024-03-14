@@ -5,6 +5,8 @@ function BookFlightForm() {
       flightId: '',
       passengerName: '',
       fareClass: 'Economy', // Default to Economy
+      baggageType: 'Carry-On',
+      numBags: 1
   });
   const [bookingConfirmation, setBookingConfirmation] = useState(null);
 
@@ -16,25 +18,62 @@ function BookFlightForm() {
       }));
   };
 
-  const submitForm = (event) => {
-      event.preventDefault();
+//   const submitForm = (event) => {
+//       event.preventDefault();
 
-      fetch('http://localhost:3001/book-flight', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(bookingDetails),
-      })
-      .then(response => response.json())
-      .then(data => {
-          setBookingConfirmation(data); // Assuming your backend sends back some confirmation details
-      })
-      .catch(error => {
-          console.error('Error:', error);
-          setBookingConfirmation({ error: "Failed to book flight. Please try again." });
-      });
-  };
+//       fetch('http://localhost:3001/book-flight', {
+//           method: 'POST',
+//           headers: {
+//               'Content-Type': 'application/json',
+//           },
+//           body: JSON.stringify(bookingDetails),
+//       })
+//       .then(response => response.json())
+//       .then(data => {
+//           setBookingConfirmation(data); // Assuming your backend sends back some confirmation details
+//       })
+//       .catch(error => {
+//           console.error('Error:', error);
+//           setBookingConfirmation({ error: "Failed to book flight. Please try again." });
+//       });
+//   };
+
+const submitForm = (event) => {
+    event.preventDefault();
+
+    // Construct the request body with all form fields
+    const requestBody = {
+        flightId: bookingDetails.flightId,
+        passengerName: bookingDetails.passengerName,
+        fareClass: bookingDetails.fareClass,
+        baggageType: bookingDetails.baggageType,
+        numBags: bookingDetails.numBags,
+    };
+    console.log(requestBody);
+
+    fetch('http://localhost:3001/book-flight', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(text => { throw new Error(text.message || 'Failed to book flight. Please try again.') });
+        }
+        console.log(response);
+        return response.json();
+    })
+    .then(data => {
+        const successMessage = `${data.message} Booking ID: ${data.bookingId}, Baggage ID: ${data.baggageId}`;
+        setBookingConfirmation({ message: successMessage });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        setBookingConfirmation({ error: error.message || "Failed to book flight. Please try again." });
+    });
+};
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -125,13 +164,13 @@ function BookFlightForm() {
     </form>
 
     {bookingConfirmation && (
-        <div className="mt-4 text-center">
-            {bookingConfirmation.error ? (
-                <p className="text-red-500">{bookingConfirmation.error}</p>
-            ) : (
-                <p className="text-green-500">Booking confirmed!</p>
-            )}
-        </div>
+    <div className="mt-4 text-center">
+        {bookingConfirmation.error ? (
+            <p className="text-red-500">{bookingConfirmation.error}</p>
+        ) : (
+            <p className="text-green-500">{bookingConfirmation.message}</p> // Updated to use .message
+        )}
+    </div>
     )}
 </div>
   );

@@ -114,7 +114,8 @@ function SearchFlightForm() {
     </form>
     
           {/* Results Table */}
-          {searchResults && (
+
+          {searchResults && searchResults.length > 0 ? (
   <div className="container mx-auto">
     <h1 className="text-3xl font-bold text-center my-6">Flight Search Results</h1>
     <div className="overflow-x-auto relative">
@@ -146,7 +147,12 @@ function SearchFlightForm() {
       </table>
     </div>
   </div>
-)}
+          ) : searchResults && searchResults.message ? (
+            <div className="mt-4 text-center">
+                <p className="text-red-500">{searchResults.message}</p>
+            </div>
+          ) : null
+}
       </div>
   );
 }
