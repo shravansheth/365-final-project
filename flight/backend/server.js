@@ -97,6 +97,58 @@ WHERE DepartureAirport.airport_city = ?
     // }
 });
 
+//book flight, intserts into booking, baggage, and tickets
+app.post('/book-flight', async (req, res) => {
+    const { flightId, passengerName, fareClass, baggageType, numBags } = req.body;
+
+    // Start a transaction
+    const connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    try {
+        // Step 1: Insert into Bookings Table
+        const bookingQuery = `
+            INSERT INTO Bookings (num_tickets, date_of_booking)
+            VALUES (?, CURDATE());
+        `;
+        const [bookingResult] = await connection.query(bookingQuery, [1]); // Assuming 1 ticket per booking for simplicity
+        const bookingId = bookingResult.insertId;
+
+        // Step 2: Insert into Baggage Table - Adjusted to include baggageType and numBags
+        const baggageQuery = `
+            INSERT INTO Baggage (baggage_type, num_bags)
+            VALUES (?, ?);
+        `;
+        const [baggageResult] = await connection.query(baggageQuery, [baggageType, numBags]);
+        const baggageId = baggageResult.insertId;
+
+        // Step 3: Insert into Tickets Table - Adjusted to include all required details
+        // Ensure to retrieve the airlineId from the Flight table based on flightId
+        const ticketQuery = `
+            INSERT INTO Tickets (flight_id, airline_id, booking_id, baggage_id, passenger_name, fare_class)
+            SELECT F.flight_id, F.airline_id, ?, ?, ?, ?
+            FROM Flight F
+            WHERE F.flight_id = ?;
+        `;
+        await connection.query(ticketQuery, [bookingId, baggageId, passengerName, fareClass, flightId]);
+
+        // Commit the transaction
+        await connection.commit();
+
+        res.json({ success: true, message: "Booking successfully created.", bookingId, baggageId });
+    } catch (error) {
+        // Rollback the transaction in case of an error
+        await connection.rollback();
+
+        console.error('Error creating booking:', error);
+        res.status(500).send('Failed to create booking.');
+    } finally {
+        // Release the connection back to the pool
+        connection.release();
+    }
+});
+
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
