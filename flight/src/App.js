@@ -6,6 +6,7 @@ import BookFlightModal from "./BookFlight.js";
 import banner from "./flights.jpg";
 import ShowFlights from "./ShowAllFlights";
 import FlightSearch from "./FlightSearch.js";
+import BookFlightForm from "./BookFlightForm";
 
 // fetch('http://localhost:3001/data')
 //     .then(response => response.json())
@@ -13,15 +14,15 @@ import FlightSearch from "./FlightSearch.js";
 //     .catch(error => console.error('Error:', error));
 
 // Dummy components for route targets
-const SearchFlights = () => 
-<div className="container mx-auto">
-<h1 className="text-3xl font-bold">Search Flights</h1>
-</div>;
-const BookFlights = () => 
-<div className="container mx-auto">
-<h1 className="text-3xl font-bold text-center my-6">Book Flight</h1>
+// const SearchFlights = () => 
+// <div className="container mx-auto">
+// <h1 className="text-3xl font-bold">Search Flights</h1>
+// </div>;
+// const BookFlights = () => 
+// <div className="container mx-auto">
+// <h1 className="text-3xl font-bold text-center my-6">Book Flight</h1>
 
-</div>;
+// </div>;
 {/*  const ShowFlights = () => <div className="container mx-auto">
  <h1 className="text-3xl font-bold">Show All Flights</h1>
  </div>;; */}
@@ -36,7 +37,7 @@ function NavigationButtons() {
   return (
     <div className="flex space-x-4 mt-4 items-center justify-center">
       {/* <SearchFlightModal isOpen={showModal} setShowModal={setShowModal}/> */}
-      <BookFlightModal isOpen={showBookModal} setShowBookModal={setShowBookModal}/>
+      {/* <BookFlightModal isOpen={showBookModal} setShowBookModal={setShowBookModal}/> */}
       {/* <button
                             type="button"
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -50,7 +51,11 @@ function NavigationButtons() {
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Search Flights
       </button>
-      <button
+      <button onClick={() => navigate('/book-flight')} 
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Book Flight
+      </button>
+      {/* <button
                             type="button"
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                             onClick={() => {
@@ -58,7 +63,7 @@ function NavigationButtons() {
                             }}
                         >
                           Book Flight
-                        </button>
+                        </button> */}
 
       <button onClick={() => navigate('/show-flights')} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Show All Flights
@@ -129,7 +134,7 @@ function App() {
         </main>
         <Routes>
           <Route path="/search-flights" element={<FlightSearch />} />
-          <Route path="/book-flights" element={<BookFlights />} />
+          <Route path="/book-flight" element={<BookFlightForm />} />
           <Route path="/show-flights" element={<ShowFlights />} />
         </Routes>
       </div>

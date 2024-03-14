@@ -49,65 +49,70 @@ function SearchFlightForm() {
   };
 
   return (
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4 py-8">
           <h1 className="text-3xl font-bold">Search Flights</h1>
           {/* Form */}
-          <form className="px-8 py-4 bg-white shadow-md rounded-lg" onSubmit={submitForm}>
-          <div className="mb-4">
-                                <label
-                                    htmlFor="departureCity"
-                                    className="block mb-2 text-sm font-medium text-gray-900"
-                                >
-                                    Departure City
-                                </label>
-                                <input
-                                    type="text"
-                                    name="departureCity"
-                                    id="departureCity"
-                                    onChange={handleChange}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label
-                                    htmlFor="destinationCity"
-                                    className="block mb-2 text-sm font-medium text-gray-900"
-                                >
-                                    Destination City
-                                </label>
-                                <input
-                                    type="text"
-                                    name="destinationCity"
-                                    id="destinationCity"
-                                    onChange={handleChange}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label
-                                    htmlFor="date"
-                                    className="block mb-2 text-sm font-medium text-gray-900"
-                                >
-                                    Date
-                                </label>
-                                <DatePicker
-                                    selected={SearchFlight.date}
-                                    onChange={handleDateChange}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                    dateFormat="MMMM d, yyyy"
-                                    required
-                                />
-                            </div>
-                            <button
-                                type="submit"
-                                className="text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                            >
-                                Search
-                            </button>
-          </form>
-
+          <form className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg px-8 pt-6 pb-8" onSubmit={submitForm}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Input fields with a two-column layout on medium screens and above */}
+        <div className="mb-4">
+          <label
+            htmlFor="departureCity"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            Departure City
+          </label>
+          <input
+            type="text"
+            name="departureCity"
+            id="departureCity"
+            onChange={handleChange}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="destinationCity"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            Destination City
+          </label>
+          <input
+            type="text"
+            name="destinationCity"
+            id="destinationCity"
+            onChange={handleChange}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            required
+          />
+        </div>
+        <div className="md:col-span-2">
+          <label
+            htmlFor="date"
+            className="block mb-2 text-sm font-medium text-gray-900"
+          >
+            Date
+          </label>
+          <DatePicker
+            selected={SearchFlight.date}
+            onChange={handleDateChange}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            dateFormat="MMMM d, yyyy"
+            required
+          />
+        </div>
+      </div>
+      <div className="flex justify-center mt-6">
+        <button
+          type="submit"
+          className="text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition duration-150 ease-in-out"
+        >
+          Search
+        </button>
+      </div>
+    </form>
+    
           {/* Results Table */}
           {searchResults && (
   <div className="container mx-auto">
